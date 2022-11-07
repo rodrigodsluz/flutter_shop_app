@@ -68,9 +68,37 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
+  Future<void> fetchAndSetProducts() async {
+    final url = Uri.https(
+        'shop-app-92fcb-default-rtdb.firebaseio.com', '/products.json');
+
+    try {
+      final response = await http.get(url);
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null) {
+        return;
+      }
+      final List<Product> loadedProducts = [];
+      extractedData.forEach((prodId, prodData) {
+        loadedProducts.add(Product(
+          id: prodId,
+          title: prodData['title'],
+          description: prodData['description'],
+          price: prodData['price'],
+          isFavorite: prodData['isFavorite'],
+          imageUrl: prodData['imageUrl'],
+        ));
+      });
+      _items = loadedProducts;
+      notifyListeners();
+    } catch (error) {
+      throw (error);
+    }
+  }
+
   Future<void> addProduct(Product product) async {
-    final url =
-        Uri.https('shop-app-92fcb-default-rtdb.firebaseio.com', '/products');
+    final url = Uri.https(
+        'shop-app-92fcb-default-rtdb.firebaseio.com', '/products.json');
 
     try {
       final response = await http.post(
