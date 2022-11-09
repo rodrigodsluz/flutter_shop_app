@@ -75,10 +75,18 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     var _params = {
       'auth': _authToken,
     };
+
+    if (filterByUser) {
+      _params = {
+        'auth': _authToken,
+        'orderBy': jsonEncode("creatorId"),
+        'equalTo': jsonEncode(_userId)
+      };
+    }
 
     final url = Uri.https('shop-app-92fcb-default-rtdb.firebaseio.com',
         '/products.json', _params);
@@ -89,10 +97,6 @@ class Products with ChangeNotifier {
       if (extractedData == null) {
         return;
       }
-
-      var _params = {
-        'auth': _authToken,
-      };
 
       final urlFavorites = Uri.https(
           'shop-app-92fcb-default-rtdb.firebaseio.com',
@@ -139,6 +143,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
+            'creatorId': _userId,
           },
         ),
       );

@@ -22,8 +22,9 @@ class OrderItem {
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
   final String _authToken;
+  final String _userId;
 
-  Orders(this._authToken, this._orders);
+  Orders(this._authToken, this._userId, this._orders);
 
   List<OrderItem> get orders {
     return [..._orders];
@@ -34,8 +35,8 @@ class Orders with ChangeNotifier {
       'auth': _authToken,
     };
 
-    final url = Uri.https(
-        'shop-app-92fcb-default-rtdb.firebaseio.com', '/orders.json', _params);
+    final url = Uri.https('shop-app-92fcb-default-rtdb.firebaseio.com',
+        '/orders/$_userId.json', _params);
 
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
@@ -69,8 +70,8 @@ class Orders with ChangeNotifier {
       'auth': _authToken,
     };
 
-    final url = Uri.https(
-        'shop-app-92fcb-default-rtdb.firebaseio.com', '/orders.json', _params);
+    final url = Uri.https('shop-app-92fcb-default-rtdb.firebaseio.com',
+        '/orders/$_userId.json', _params);
 
     final timestamp = DateTime.now();
 
